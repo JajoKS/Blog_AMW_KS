@@ -1,16 +1,37 @@
 // App.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Outlet, useNavigate } from 'react-router-dom';
 import StronaLogin from './komponenty/StronaLogin';
 import StronaRejestruj from './komponenty/StronaRejestruj';
 import MojePosty from './komponenty/MojePosty';
 import Obserwowani from './komponenty/Obserwowani';
-import Polubienia from './komponenty/Polubienia';
+import TwojeBlogi from './komponenty/TwojeBlogi';
 import Homepage from './komponenty/Homepage';
+import BlogPage from './komponenty/Blogpage';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
+import KomentarzePosta from './komponenty/KomentarzePosta';
+import axios from 'axios';
 
 // Header – baner u góry z czarnym tłem
 const Header = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Pobieramy dane sesji z backendu
+    axios.get("http://localhost:5432/session", { withCredentials: true })
+      .then(response => {
+        if (response.data.user) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      })
+      .catch(err => {
+        console.error("Błąd przy sprawdzaniu sesji:", err);
+        setIsLoggedIn(false);
+      });
+  }, []); // Ma się wykonać tylko raz przy montowaniu Layout
+
   return (
     <nav className="navbar navbar-dark bg-dark">
       <div className="container-fluid d-flex justify-content-between align-items-center">
@@ -20,6 +41,7 @@ const Header = () => {
         </Link>
 
         {/* Linki po prawej stronie */}
+        {!isLoggedIn && (
         <div>
           <Link to="/login" className="nav-link d-inline text-white mx-2">
             Zaloguj się
@@ -27,7 +49,7 @@ const Header = () => {
           <Link to="/register" className="nav-link d-inline text-white mx-2">
             Zarejestruj się
           </Link>
-        </div>
+        </div>)}
       </div>
     </nav>
   );
@@ -37,12 +59,18 @@ const Header = () => {
 const Sidebar = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const Logout = async () => {
+    try {
+      // Wywołaj endpoint wylogowania, jeśli taki masz (np. POST "/logout")
+      await axios.post("http://localhost:5432/logout", {}, { withCredentials: true });
+    } catch (err) {
+      console.error("Błąd przy wylogowywaniu:", err);
+    }
     // Logika wylogowania, np. usuwanie tokenów, ustawienie stanu itp.
     console.log('Wylogowano!');
-    //Tutaj dodać funkcje logout która wychodzi z sesji
     // Przekierowanie do strony logowania
     navigate('/login');
+    window.location.reload();
   };
 
   return (
@@ -54,10 +82,10 @@ const Sidebar = () => {
         Obserwowani
       </Link>
       <Link to="/likes" className="list-group-item list-group-item-action">
-        Polubienia
+        Twoje Blogi
       </Link>
       <button
-        onClick={handleLogout}
+        onClick={Logout}
         className="list-group-item list-group-item-action text-start btn btn-link"
       >
         Wyloguj się
@@ -66,46 +94,50 @@ const Sidebar = () => {
   );
 };
 
-// RightSidebar – przykładowy prawy panel
-const RightSidebar = () => {
-  return (
-    <div>
-      <h5>Panel Prawy</h5>
-      <p>Dodatkowe informacje lub widgety</p>
-    </div>
-  );
-};
-
 // Footer – stopka z szarym tłem i białym tekstem
 const Footer = () => {
   return (
     <footer className="bg-secondary text-white text-center py-2">
-      Wykonał: Krzysztof Serafin
+      Wykonał: ...
     </footer>
   );
 };
 
 // Layout – główny szablon wszystkie sekcje (header, sidebar, main, right sidebar, footer)
 const Layout = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Pobieramy dane sesji z backendu
+    axios.get("http://localhost:5432/session", { withCredentials: true })
+      .then(response => {
+        if (response.data.user) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      })
+      .catch(err => {
+        console.error("Błąd przy sprawdzaniu sesji:", err);
+        setIsLoggedIn(false);
+      });
+  }, []); // Ma się wykonać tylko raz przy montowaniu Layout
+
   return (
     <div className="d-flex flex-column vh-100">
       <Header />
       <div className="container-fluid flex-grow-1 overflow-hidden">
         <div className="row h-100">
-
-          <div className="col-md-2 bg-light p-3">
-            <Sidebar />
-          </div>
-
+          {isLoggedIn && (
+            <div className="col-md-2 bg-light p-3">
+              <Sidebar />
+            </div>
+          )}
           <div
-            className="col-md-8 p-3 overflow-auto"
+            className={isLoggedIn ? "col-md-10 p-3 overflow-auto" : "col-md-12 p-3 overflow-auto"}
             style={{ backgroundColor: '#001f3f', color: 'white' }}
           >
             <Outlet/>
-          </div>
-
-          <div className="col-md-2 bg-light p-3">
-            <RightSidebar />
           </div>
         </div>
       </div>
@@ -125,7 +157,9 @@ function App() {
           <Route path="register" element={<StronaRejestruj/>} />
           <Route path="posts" element={<MojePosty/>} />
           <Route path="following" element={<Obserwowani/>} />
-          <Route path="likes" element={<Polubienia/>} />
+          <Route path="likes" element={<TwojeBlogi/>} />
+          <Route path="/blogs/:id" element={<BlogPage />} />
+          <Route path="/posts/:postId/comments" element={<KomentarzePosta />} />
         </Route>
       </Routes>
     </Router>
