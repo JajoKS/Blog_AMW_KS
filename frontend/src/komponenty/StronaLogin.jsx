@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+axios.defaults.baseURL = import.meta.env.VITE_URL
 const StronaLogin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -12,7 +12,7 @@ const StronaLogin = () => {
     e.preventDefault();
     try {
       // Wysyłamy dane na endpoint logowania
-      const response = await axios.post("http://localhost:5432/login", {
+      const response = await axios.post("/login", {
         username,
         password,
       }, { withCredentials: true }); // wysyłamy ciasteczka wraz z żądaniem

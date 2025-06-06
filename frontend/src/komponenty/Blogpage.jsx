@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
+axios.defaults.baseURL = import.meta.env.VITE_URL
+
 const BlogPage = () => {
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
@@ -16,7 +18,7 @@ const BlogPage = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5432/blogs/${id}`)
+      .get(`/blogs/${id}`)
       .then((res) => {
         setBlog(res.data);
       })
@@ -30,7 +32,7 @@ const BlogPage = () => {
   // Pobieramy dane aktualnie zalogowanego użytkownika z sesji
   useEffect(() => {
     axios
-      .get("http://localhost:5432/session", { withCredentials: true })
+      .get("/session", { withCredentials: true })
       .then((res) => {
         setCurrentUser(res.data.user);
       })
@@ -62,7 +64,7 @@ const BlogPage = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `http://localhost:5432/blogs/${id}/posts`,
+        `/blogs/${id}/posts`,
         { title: newPostTitle, content: newPostContent },
         { withCredentials: true }
       );
@@ -71,7 +73,7 @@ const BlogPage = () => {
       setNewPostContent("");
       setShowPostForm(false);
       // Odświeżamy blog (możemy np. dodać nowy post do listy lub ponownie pobrać bloga)
-      const res = await axios.get(`http://localhost:5432/blogs/${id}`, { withCredentials: true });
+      const res = await axios.get(`/blogs/${id}`, { withCredentials: true });
       setBlog(res.data);
     } catch (err) {
       console.error("Błąd przy tworzeniu posta:", err);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+axios.defaults.baseURL = import.meta.env.VITE_URL
 
 const KomentarzePosta = () => {
   const { postId } = useParams();
@@ -14,7 +15,7 @@ const KomentarzePosta = () => {
 
   const GetComments = async () => {
     try {
-      const res = await axios.get(`http://localhost:5432/posts/${postId}/comments`, { withCredentials: true });
+      const res = await axios.get(`/posts/${postId}/comments`, { withCredentials: true });
       setComments(res.data);
     } catch (err) {
       console.error("Błąd pobierania komentarzy:", err);
@@ -26,7 +27,7 @@ const KomentarzePosta = () => {
 
   const Session = async () => {
     try {
-      const res = await axios.get("http://localhost:5432/session", { withCredentials: true });
+      const res = await axios.get("/session", { withCredentials: true });
       setCurrentUser(res.data.user);
     } catch (err) {
       console.error("Błąd przy pobieraniu sesji:", err);
@@ -52,7 +53,7 @@ const KomentarzePosta = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `http://localhost:5432/posts/${postId}/comments`, 
+        `/posts/${postId}/comments`, 
         { content: newComment }, 
         { withCredentials: true }
       );

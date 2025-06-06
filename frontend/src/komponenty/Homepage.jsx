@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./styles.css";
+
+axios.defaults.baseURL = import.meta.env.VITE_URL
 const Homepage = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +12,7 @@ const Homepage = () => {
   useEffect(() => {
     // Zakładamy, że endpoint API zwraca listę blogów
     axios
-      .get("http://localhost:5432/")
+      .get("/")
       .then((res) => {
         setBlogs(res.data);
       })

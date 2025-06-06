@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+axios.defaults.baseURL = import.meta.env.VITE_URL
 const StronaRejestruj = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -9,7 +9,7 @@ const StronaRejestruj = () => {
   const Submit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5432/register", {
+      const response = await axios.post("/register", {
         username,
         password,
       });

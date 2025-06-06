@@ -1,7 +1,7 @@
 // MojePosty.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+axios.defaults.baseURL = import.meta.env.VITE_URL
 const MojePosty = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +10,7 @@ const MojePosty = () => {
   // Funkcja pobierająca posty użytkownika
   const fetchMyPosts = async () => {
     try {
-      const response = await axios.get("http://localhost:5432/myposts", { withCredentials: true });
+      const response = await axios.get("/myposts", { withCredentials: true });
       setPosts(response.data);
     } catch (err) {
       console.error("Błąd przy pobieraniu postów:", err);

@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+axios.defaults.baseURL = import.meta.env.VITE_URL
+
 const TwojeBlogi = () => {
   const [blogs, setBlogs] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -13,7 +15,7 @@ const TwojeBlogi = () => {
   // Pobranie blogów zalogowanego użytkownika
   const fetchBlogs = async () => {
     try {
-      const response = await axios.get("http://localhost:5432/myblogs", { withCredentials: true });
+      const response = await axios.get("/myblogs", { withCredentials: true });
       setBlogs(response.data);
     } catch (err) {
       console.error("Błąd przy pobieraniu Twoich blogów:", err);
@@ -34,7 +36,7 @@ const TwojeBlogi = () => {
   const CreateBlog = async (e) => {
     e.preventDefault(); // zatrzymuje przeładowanie strony
     try {
-      const response = await axios.post("http://localhost:5432/blogs", { title, description }, { withCredentials: true });
+      const response = await axios.post("/blogs", { title, description }, { withCredentials: true });
       setMessage("Blog utworzony pomyślnie!");
       setTitle("");
       setDescription("");
