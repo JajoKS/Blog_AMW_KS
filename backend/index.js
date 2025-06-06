@@ -10,7 +10,7 @@ const { User, Blog, Post, Comment } = db;
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:3001",
+  origin: "https://blog-amw-ks-frontend.onrender.com",
   credentials: true
 }));
 app.use(express.json());
