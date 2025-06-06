@@ -110,7 +110,7 @@ const Layout = () => {
 
   useEffect(() => {
     // Pobieramy dane sesji z backendu
-    axios.get("http://localhost:5432/session", { withCredentials: true })
+    axios.get("/session", { withCredentials: true })
       .then(response => {
         if (response.data.user) {
           setIsLoggedIn(true);
