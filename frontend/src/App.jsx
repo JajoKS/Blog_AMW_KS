@@ -11,6 +11,7 @@ import BlogPage from './komponenty/Blogpage';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import KomentarzePosta from './komponenty/KomentarzePosta';
 import axios from 'axios';
+axios.defaults.baseURL = import.meta.env.VITE_URL
 
 // Header – baner u góry z czarnym tłem
 const Header = () => {
@@ -18,7 +19,7 @@ const Header = () => {
 
   useEffect(() => {
     // Pobieramy dane sesji z backendu
-    axios.get("http://localhost:5432/session", { withCredentials: true })
+    axios.get("/session", { withCredentials: true })
       .then(response => {
         if (response.data.user) {
           setIsLoggedIn(true);
@@ -62,7 +63,7 @@ const Sidebar = () => {
   const Logout = async () => {
     try {
       // Wywołaj endpoint wylogowania, jeśli taki masz (np. POST "/logout")
-      await axios.post("http://localhost:5432/logout", {}, { withCredentials: true });
+      await axios.post("/logout", {}, { withCredentials: true });
     } catch (err) {
       console.error("Błąd przy wylogowywaniu:", err);
     }
