@@ -98,7 +98,7 @@ const Sidebar = () => {
 const Footer = () => {
   return (
     <footer className="bg-secondary text-white text-center py-2">
-      Wykonał: ...
+      Wykonał: Krzysztof Serafin
     </footer>
   );
 };
